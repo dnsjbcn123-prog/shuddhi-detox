@@ -35,8 +35,19 @@ const DigitalResetSpace = () => {
         </div>
       </section>
 
-      <BreathingExercise />
-      <FocusTimer />
+      {/* Breathing + Timer side by side */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="glass p-8" style={{ borderRadius: "var(--radius)" }}>
+              <BreathingExercise />
+            </div>
+            <div className="glass p-8" style={{ borderRadius: "var(--radius)" }}>
+              <FocusTimer />
+            </div>
+          </div>
+        </div>
+      </section>
       <ReleaseRitual />
 
       <Footer />
@@ -61,56 +72,54 @@ const BreathingExercise = () => {
   }, [active]);
 
   return (
-    <section className="py-20">
-      <div className="container mx-auto flex flex-col items-center px-6">
-        <h2 className="font-heading text-2xl font-bold text-foreground">Breathe</h2>
+    <div className="flex flex-col items-center">
+      <h2 className="font-heading text-2xl font-bold text-foreground">Breathe</h2>
 
-        <div className="relative mt-12 flex h-64 w-64 items-center justify-center">
-          <motion.div
-            className="absolute h-full w-full rounded-full bg-primary/20"
-            animate={
-              active
-                ? {
-                    scale: phase === "inhale" ? 1.3 : phase === "hold" ? 1.3 : 0.9,
-                    opacity: phase === "hold" ? 0.6 : 0.3,
-                  }
-                : { scale: [0.95, 1.05, 0.95], opacity: [0.2, 0.35, 0.2] }
-            }
-            transition={
-              active
-                ? { duration: phase === "inhale" ? 4 : phase === "hold" ? 3 : 4, ease: "easeInOut" }
-                : { duration: 6, repeat: Infinity, ease: "easeInOut" }
-            }
-          />
-          <motion.div
-            className="absolute h-3/4 w-3/4 rounded-full bg-primary/30"
-            animate={
-              active
-                ? {
-                    scale: phase === "inhale" ? 1.2 : phase === "hold" ? 1.2 : 0.85,
-                  }
-                : { scale: [0.9, 1.1, 0.9] }
-            }
-            transition={
-              active
-                ? { duration: phase === "inhale" ? 4 : phase === "hold" ? 3 : 4, ease: "easeInOut" }
-                : { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
-            }
-          />
-          <span className="relative z-10 font-heading text-lg text-foreground/70">
-            {active ? (phase === "inhale" ? "Breathe in..." : phase === "hold" ? "Hold..." : "Breathe out...") : "Ready"}
-          </span>
-        </div>
-
-        <button
-          onClick={() => setActive(!active)}
-          className="mt-8 rounded-lg bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase transition-all duration-300 hover:bg-primary/20"
-          style={{ borderRadius: "var(--radius)" }}
-        >
-          {active ? "Pause" : "Begin Breathing"}
-        </button>
+      <div className="relative mt-8 flex h-52 w-52 items-center justify-center">
+        <motion.div
+          className="absolute h-full w-full rounded-full bg-primary/20"
+          animate={
+            active
+              ? {
+                  scale: phase === "inhale" ? 1.3 : phase === "hold" ? 1.3 : 0.9,
+                  opacity: phase === "hold" ? 0.6 : 0.3,
+                }
+              : { scale: [0.95, 1.05, 0.95], opacity: [0.2, 0.35, 0.2] }
+          }
+          transition={
+            active
+              ? { duration: phase === "inhale" ? 4 : phase === "hold" ? 3 : 4, ease: "easeInOut" }
+              : { duration: 6, repeat: Infinity, ease: "easeInOut" }
+          }
+        />
+        <motion.div
+          className="absolute h-3/4 w-3/4 rounded-full bg-primary/30"
+          animate={
+            active
+              ? {
+                  scale: phase === "inhale" ? 1.2 : phase === "hold" ? 1.2 : 0.85,
+                }
+              : { scale: [0.9, 1.1, 0.9] }
+          }
+          transition={
+            active
+              ? { duration: phase === "inhale" ? 4 : phase === "hold" ? 3 : 4, ease: "easeInOut" }
+              : { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }
+          }
+        />
+        <span className="relative z-10 font-heading text-lg text-foreground/70">
+          {active ? (phase === "inhale" ? "Breathe in..." : phase === "hold" ? "Hold..." : "Breathe out...") : "Ready"}
+        </span>
       </div>
-    </section>
+
+      <button
+        onClick={() => setActive(!active)}
+        className="mt-6 rounded-lg bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase transition-all duration-300 hover:bg-primary/20"
+        style={{ borderRadius: "var(--radius)" }}
+      >
+        {active ? "Pause" : "Begin Breathing"}
+      </button>
+    </div>
   );
 };
 
@@ -137,78 +146,64 @@ const FocusTimer = () => {
   const secs = timeLeft % 60;
 
   return (
-    <section className="py-20">
-      <div className="container mx-auto flex flex-col items-center px-6">
-        <h2 className="font-heading text-2xl font-bold text-foreground">Focus Timer</h2>
+    <div className="flex flex-col items-center">
+      <h2 className="font-heading text-2xl font-bold text-foreground">Focus Timer</h2>
 
-        <div className="mt-8 flex gap-4">
-          {[60, 180, 300].map((d) => (
-            <button
-              key={d}
-              onClick={() => { setDuration(d); if (!running) setTimeLeft(0); }}
-              className={`rounded-lg px-5 py-2 font-heading text-sm transition-all ${
-                duration === d ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-primary/10"
-              }`}
-              style={{ borderRadius: "var(--radius)" }}
-            >
-              {d / 60}m
-            </button>
-          ))}
-        </div>
-
-        <div className="relative mt-12 flex h-48 w-48 items-center justify-center">
-          <svg viewBox="0 0 100 100" className="absolute h-full w-full -rotate-90">
-            <circle cx="50" cy="50" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="4" />
-            <circle
-              cx="50"
-              cy="50"
-              r="44"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeDasharray={`${(1 - timeLeft / duration) * 276.5} 276.5`}
-              style={{ transition: "stroke-dasharray 1s linear" }}
-            />
-          </svg>
-          <span className="relative font-heading text-3xl font-light text-foreground">
-            {running || timeLeft > 0
-              ? `${mins}:${secs.toString().padStart(2, "0")}`
-              : `${duration / 60}:00`}
-          </span>
-        </div>
-
-        {!running ? (
+      <div className="mt-6 flex gap-3">
+        {[60, 180, 300].map((d) => (
           <button
-            onClick={start}
-            className="mt-8 rounded-lg bg-primary px-8 py-3 font-heading text-sm tracking-wider text-primary-foreground uppercase transition-all duration-300 hover:opacity-90"
+            key={d}
+            onClick={() => { setDuration(d); if (!running) setTimeLeft(0); }}
+            className={`rounded-lg px-4 py-2 font-heading text-sm transition-all ${
+              duration === d ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-primary/10"
+            }`}
             style={{ borderRadius: "var(--radius)" }}
           >
-            Start
+            {d / 60}m
           </button>
-        ) : (
-          <button
-            onClick={() => setRunning(false)}
-            className="mt-8 rounded-lg bg-muted px-8 py-3 font-heading text-sm tracking-wider text-muted-foreground uppercase transition-all duration-300 hover:bg-muted/80"
-            style={{ borderRadius: "var(--radius)" }}
-          >
-            Pause
-          </button>
-        )}
-
-        {timeLeft === 0 && !running && duration > 0 && (
-          <AnimatePresence>
-            <motion.p
-              className="mt-6 font-accent text-lg italic text-primary"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              {/* Shown after timer completes via natural flow */}
-            </motion.p>
-          </AnimatePresence>
-        )}
+        ))}
       </div>
-    </section>
+
+      <div className="relative mt-8 flex h-40 w-40 items-center justify-center">
+        <svg viewBox="0 0 100 100" className="absolute h-full w-full -rotate-90">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="4" />
+          <circle
+            cx="50"
+            cy="50"
+            r="44"
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeDasharray={`${(1 - timeLeft / duration) * 276.5} 276.5`}
+            style={{ transition: "stroke-dasharray 1s linear" }}
+          />
+        </svg>
+        <span className="relative font-heading text-2xl font-light text-foreground">
+          {running || timeLeft > 0
+            ? `${mins}:${secs.toString().padStart(2, "0")}`
+            : `${duration / 60}:00`}
+        </span>
+      </div>
+
+      {!running ? (
+        <button
+          onClick={start}
+          className="mt-6 rounded-lg bg-primary px-8 py-3 font-heading text-sm tracking-wider text-primary-foreground uppercase transition-all duration-300 hover:opacity-90"
+          style={{ borderRadius: "var(--radius)" }}
+        >
+          Start
+        </button>
+      ) : (
+        <button
+          onClick={() => setRunning(false)}
+          className="mt-6 rounded-lg bg-muted px-8 py-3 font-heading text-sm tracking-wider text-muted-foreground uppercase transition-all duration-300 hover:bg-muted/80"
+          style={{ borderRadius: "var(--radius)" }}
+        >
+          Pause
+        </button>
+      )}
+    </div>
   );
 };
 
