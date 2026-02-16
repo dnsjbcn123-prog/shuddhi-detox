@@ -20,8 +20,8 @@ const Navigation = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-40">
       <div className="glass mx-4 mt-4 flex items-center justify-between px-6 py-3 md:mx-8 md:px-8 md:py-4">
-        <Link to="/" className="font-heading text-xl font-bold tracking-wider text-secondary">
-          SHUDDHI
+        <Link to="/" className="font-accent text-2xl italic tracking-wide text-secondary">
+          Shuddhi
         </Link>
 
         {/* Desktop nav */}
