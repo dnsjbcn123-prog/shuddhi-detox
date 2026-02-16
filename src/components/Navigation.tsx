@@ -6,9 +6,8 @@ import { Menu, X } from "lucide-react";
 const navItems = [
   { path: "/", label: "Home" },
   { path: "/about", label: "About" },
-  { path: "/lab", label: "Digital Balance Lab" },
+  { path: "/lab", label: "Balance Lab" },
   { path: "/articles", label: "Articles" },
-  { path: "/reset", label: "Digital Reset" },
   { path: "/reflections", label: "Reflections" },
   { path: "/faq", label: "Knowledge Vault" },
 ];
