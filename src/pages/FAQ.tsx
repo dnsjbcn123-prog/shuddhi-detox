@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { Send, MessageCircle, RefreshCw } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const faqs = [
   {
@@ -30,10 +32,138 @@ const faqs = [
   },
 ];
 
+type ChatMsg = { role: "user" | "assistant"; content: string };
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shuddhi-chat`;
+
 const FAQ = () => {
   const [selected, setSelected] = useState<number | null>(null);
-  const [question, setQuestion] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+
+  // Chat state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSatisfied, setShowSatisfied] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, showSatisfied]);
+
+  const sendMessage = async (input: string) => {
+    if (!input.trim() || isLoading) return;
+
+    const userMsg: ChatMsg = { role: "user", content: input.trim() };
+    setChatMessages((prev) => [...prev, userMsg]);
+    setChatInput("");
+    setIsLoading(true);
+    setShowSatisfied(false);
+
+    let assistantSoFar = "";
+
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      setChatMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+        }
+        return [...prev, { role: "assistant", content: assistantSoFar }];
+      });
+    };
+
+    try {
+      const allMessages = [...chatMessages, userMsg];
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: allMessages }),
+      });
+
+      if (!resp.ok || !resp.body) {
+        const errData = await resp.json().catch(() => null);
+        throw new Error(errData?.error || `Request failed (${resp.status})`);
+      }
+
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Flush remaining
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) upsertAssistant(content);
+          } catch { /* ignore */ }
+        }
+      }
+
+      setShowSatisfied(true);
+    } catch (e) {
+      console.error("Chat error:", e);
+      toast({
+        title: "Couldn't get a response",
+        description: e instanceof Error ? e.message : "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAskAnother = () => {
+    setShowSatisfied(false);
+  };
+
+  const handleReset = () => {
+    setChatMessages([]);
+    setShowSatisfied(false);
+    setChatInput("");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -96,39 +226,128 @@ const FAQ = () => {
             ))}
           </div>
 
-          {/* Still Curious */}
+          {/* Still Curious - AI Chat */}
           <motion.div
-            className="mx-auto mt-20 max-w-md text-center"
+            className="mx-auto mt-20 max-w-xl text-center"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
             <h3 className="font-accent text-2xl italic text-foreground">Still Curious?</h3>
-            {!submitted ? (
-              <div className="mt-6">
-                <input
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Type your question..."
-                  className="glass w-full p-4 text-center font-body text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  style={{ borderRadius: "var(--radius)" }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && question.trim()) {
-                      setSubmitted(true);
-                      setQuestion("");
-                    }
-                  }}
-                />
-              </div>
-            ) : (
-              <motion.p
-                className="mt-6 font-accent text-lg italic text-primary"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
+            <p className="mt-2 text-sm text-muted-foreground">
+              Ask our AI guide anything about digital balance.
+            </p>
+
+            {!chatOpen ? (
+              <motion.button
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-heading text-sm tracking-wider text-primary-foreground uppercase transition-all duration-300 hover:opacity-90"
+                onClick={() => setChatOpen(true)}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                Balance begins with awareness.
-              </motion.p>
+                <MessageCircle className="h-4 w-4" />
+                Start a conversation
+              </motion.button>
+            ) : (
+              <motion.div
+                className="glass mt-6 overflow-hidden text-left"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Chat messages */}
+                <div className="max-h-80 overflow-y-auto p-6 space-y-4">
+                  {chatMessages.length === 0 && (
+                    <p className="text-center font-body text-sm text-muted-foreground/60 italic">
+                      Ask me anything about digital balance, mindful tech, or Shuddhi...
+                    </p>
+                  )}
+
+                  {chatMessages.map((msg, i) => (
+                    <motion.div
+                      key={i}
+                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                          msg.role === "user"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted text-foreground"
+                        }`}
+                      >
+                        {msg.content}
+                      </div>
+                    </motion.div>
+                  ))}
+
+                  {isLoading && chatMessages[chatMessages.length - 1]?.role !== "assistant" && (
+                    <div className="flex justify-start">
+                      <div className="rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+                        <span className="animate-pulse">Thinking...</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Satisfaction prompt */}
+                  {showSatisfied && !isLoading && (
+                    <motion.div
+                      className="flex flex-col items-center gap-3 pt-4 border-t border-border"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5, duration: 0.4 }}
+                    >
+                      <p className="font-body text-sm text-muted-foreground">
+                        Was this helpful?
+                      </p>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={handleReset}
+                          className="rounded-full bg-primary/10 px-5 py-2 text-xs font-heading tracking-wider text-primary uppercase hover:bg-primary/20 transition-colors"
+                        >
+                          Yes, thank you! ✨
+                        </button>
+                        <button
+                          onClick={handleAskAnother}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-muted px-5 py-2 text-xs font-heading tracking-wider text-foreground uppercase hover:bg-muted/80 transition-colors"
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                          Ask another
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <div ref={chatEndRef} />
+                </div>
+
+                {/* Input */}
+                {!showSatisfied && (
+                  <div className="border-t border-border p-4">
+                    <div className="flex gap-2">
+                      <input
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Type your question..."
+                        className="flex-1 rounded-full bg-muted px-4 py-2.5 text-sm font-body text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") sendMessage(chatInput);
+                        }}
+                        disabled={isLoading}
+                      />
+                      <button
+                        onClick={() => sendMessage(chatInput)}
+                        disabled={!chatInput.trim() || isLoading}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-all hover:opacity-90 disabled:opacity-40"
+                      >
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
             )}
           </motion.div>
         </div>
