@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -58,6 +58,29 @@ const DigitalResetSpace = () => {
 const BreathingExercise = () => {
   const [active, setActive] = useState(false);
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/audio/meditation-ambient.mp3");
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.4;
+    return () => {
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
+  const toggleBreathing = () => {
+    if (!active) {
+      audioRef.current?.play().catch(() => {});
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
+    setActive(!active);
+  };
 
   useEffect(() => {
     if (!active) return;
@@ -113,7 +136,7 @@ const BreathingExercise = () => {
       </div>
 
       <button
-        onClick={() => setActive(!active)}
+        onClick={toggleBreathing}
         className="mt-6 rounded-lg bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase transition-all duration-300 hover:bg-primary/20"
         style={{ borderRadius: "var(--radius)" }}
       >
