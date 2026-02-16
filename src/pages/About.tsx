@@ -125,6 +125,54 @@ const About = () => (
       </div>
     </section>
 
+    {/* Team Section */}
+    <section className="bg-muted py-32">
+      <div className="container mx-auto px-6">
+        <motion.div
+          className="mb-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="font-heading text-3xl font-bold text-foreground md:text-4xl">
+            The Team Behind Shuddhi
+          </h2>
+          <p className="mt-4 font-body text-lg text-muted-foreground">
+            Building a more intentional digital future.
+          </p>
+        </motion.div>
+
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { name: "Samay Shah", role: "Coming soon" },
+            { name: "Dhir Jain", role: "Coming soon" },
+            { name: "Rivaan Shah", role: "Coming soon" },
+            { name: "Aakash Sharma", role: "Coming soon" },
+          ].map((member, i) => (
+            <motion.div
+              key={member.name}
+              className="glass flex flex-col items-center p-8 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.6 }}
+              whileHover={{ y: -5 }}
+            >
+              {/* Placeholder avatar */}
+              <div className="mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
+                <span className="font-heading text-3xl font-bold text-primary">
+                  {member.name.split(" ").map(n => n[0]).join("")}
+                </span>
+              </div>
+              <h3 className="font-heading text-lg font-bold text-foreground">{member.name}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{member.role}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <Footer />
   </div>
 );
