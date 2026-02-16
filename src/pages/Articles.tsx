@@ -42,6 +42,51 @@ const articles = [
   },
 ];
 
+const videos = [
+  {
+    id: "v1",
+    title: "How Social Media Rewires Your Brain",
+    channel: "After Skool",
+    youtubeId: "7I9MJPzYMPc",
+    category: "Mind",
+  },
+  {
+    id: "v2",
+    title: "Digital Minimalism — Cal Newport",
+    channel: "Cal Newport",
+    youtubeId: "3E7hkPZ-HTk",
+    category: "Balance",
+  },
+  {
+    id: "v3",
+    title: "The Attention Economy — How They Addict Us",
+    channel: "Freedom in Thought",
+    youtubeId: "50R21mblLb0",
+    category: "Technology",
+  },
+  {
+    id: "v4",
+    title: "Monk Mode — How to Get Sh*t Done",
+    channel: "Better Ideas",
+    youtubeId: "JBzCoB_l8EM",
+    category: "Future",
+  },
+  {
+    id: "v5",
+    title: "Why You're Always Tired — The Dopamine Trap",
+    channel: "Sprouht",
+    youtubeId: "kl1ujGtVFnQ",
+    category: "Mind",
+  },
+  {
+    id: "v6",
+    title: "How I Cured My Phone Addiction",
+    channel: "Matt D'Avella",
+    youtubeId: "fVWT3MJnm48",
+    category: "Balance",
+  },
+];
+
 const categoryColors: Record<string, string> = {
   Mind: "bg-primary/15 text-primary",
   Technology: "bg-accent/30 text-accent-foreground",
@@ -53,6 +98,7 @@ const Articles = () => {
   const [selectedArticle, setSelectedArticle] = useState<typeof articles[0] | null>(null);
   const [reflection, setReflection] = useState("");
   const [showReflection, setShowReflection] = useState(false);
+  const [activeTab, setActiveTab] = useState<"articles" | "videos">("articles");
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,7 +107,7 @@ const Articles = () => {
       <section className="pt-32 pb-20">
         <div className="container mx-auto px-6">
           <motion.div
-            className="mb-16 text-center"
+            className="mb-12 text-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -74,44 +120,108 @@ const Articles = () => {
             </p>
           </motion.div>
 
-          {/* Book cards with images */}
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2">
-            {articles.map((article, i) => (
+          {/* Tabs */}
+          <div className="mx-auto mb-12 flex max-w-xs justify-center gap-2">
+            <button
+              onClick={() => setActiveTab("articles")}
+              className={`rounded-lg px-6 py-3 font-heading text-sm tracking-wider uppercase transition-all duration-300 ${
+                activeTab === "articles"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-primary/10"
+              }`}
+              style={{ borderRadius: "var(--radius)" }}
+            >
+              Articles
+            </button>
+            <button
+              onClick={() => setActiveTab("videos")}
+              className={`rounded-lg px-6 py-3 font-heading text-sm tracking-wider uppercase transition-all duration-300 ${
+                activeTab === "videos"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-primary/10"
+              }`}
+              style={{ borderRadius: "var(--radius)" }}
+            >
+              Videos
+            </button>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {activeTab === "articles" ? (
               <motion.div
-                key={article.id}
-                className="glass group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-xl"
-                initial={{ opacity: 0, y: 20 }}
+                key="articles"
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1, duration: 0.6 }}
-                whileHover={{ y: -5, rotateY: 3 }}
-                onClick={() => setSelectedArticle(article)}
-                style={{ perspective: "1000px", borderRadius: "var(--radius)" }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                  <span className={`absolute bottom-4 left-4 inline-block rounded-full px-3 py-1 font-body text-xs ${categoryColors[article.category]}`}>
-                    {article.category}
-                  </span>
-                </div>
-                <div className="p-6">
-                  <h3 className="font-heading text-xl font-bold text-foreground">
-                    {article.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {article.excerpt}
-                  </p>
-                  <span className="mt-4 inline-block text-xs tracking-wider text-primary uppercase">
-                    Read →
-                  </span>
+                {/* Article cards */}
+                <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2">
+                  {articles.map((article, i) => (
+                    <motion.div
+                      key={article.id}
+                      className="glass group cursor-pointer overflow-hidden transition-all duration-500 hover:shadow-xl"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1, duration: 0.6 }}
+                      whileHover={{ y: -5, rotateY: 3 }}
+                      onClick={() => setSelectedArticle(article)}
+                      style={{ perspective: "1000px", borderRadius: "var(--radius)" }}
+                    >
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={article.image} alt={article.title} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+                        <span className={`absolute bottom-4 left-4 inline-block rounded-full px-3 py-1 font-body text-xs ${categoryColors[article.category]}`}>{article.category}</span>
+                      </div>
+                      <div className="p-6">
+                        <h3 className="font-heading text-xl font-bold text-foreground">{article.title}</h3>
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{article.excerpt}</p>
+                        <span className="mt-4 inline-block text-xs tracking-wider text-primary uppercase">Read →</span>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
-            ))}
-          </div>
+            ) : (
+              <motion.div
+                key="videos"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+              >
+                {/* Video cards */}
+                <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                  {videos.map((video, i) => (
+                    <motion.div
+                      key={video.id}
+                      className="glass overflow-hidden"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1, duration: 0.6 }}
+                      style={{ borderRadius: "var(--radius)" }}
+                    >
+                      <div className="relative aspect-video w-full">
+                        <iframe
+                          src={`https://www.youtube.com/embed/${video.youtubeId}`}
+                          title={video.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="h-full w-full"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="p-5">
+                        <span className={`inline-block rounded-full px-3 py-1 font-body text-xs ${categoryColors[video.category]}`}>{video.category}</span>
+                        <h3 className="mt-3 font-heading text-base font-bold leading-snug text-foreground">{video.title}</h3>
+                        <p className="mt-1 text-xs text-muted-foreground">{video.channel}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -127,66 +237,34 @@ const Articles = () => {
           >
             <motion.div
               className="mx-4 max-h-[85vh] w-full max-w-2xl overflow-y-auto bg-background shadow-2xl"
-              style={{ borderRadius: "var(--radius)", backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.6' type='fractalNoise'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E\")" }}
+              style={{ borderRadius: "var(--radius)" }}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.5 }}
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Article hero image */}
               <div className="relative h-56 overflow-hidden" style={{ borderRadius: "var(--radius) var(--radius) 0 0" }}>
                 <img src={selectedArticle.image} alt={selectedArticle.title} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
               </div>
-
               <div className="p-8 md:p-12">
-                <span className={`inline-block rounded-full px-3 py-1 font-body text-xs ${categoryColors[selectedArticle.category]}`}>
-                  {selectedArticle.category}
-                </span>
-                <h2 className="mt-6 font-heading text-3xl font-bold text-foreground">
-                  {selectedArticle.title}
-                </h2>
+                <span className={`inline-block rounded-full px-3 py-1 font-body text-xs ${categoryColors[selectedArticle.category]}`}>{selectedArticle.category}</span>
+                <h2 className="mt-6 font-heading text-3xl font-bold text-foreground">{selectedArticle.title}</h2>
                 <div className="mt-8 space-y-4">
                   {selectedArticle.content.split("\n\n").map((para, i) => (
-                    <p key={i} className="font-body text-base leading-relaxed text-foreground/80">
-                      {para}
-                    </p>
+                    <p key={i} className="font-body text-base leading-relaxed text-foreground/80">{para}</p>
                   ))}
                 </div>
-
-                {/* Reflection prompt */}
                 <div className="mt-12 border-t border-border pt-8">
-                  <p className="font-accent text-lg italic text-primary">
-                    What will you apply today?
-                  </p>
+                  <p className="font-accent text-lg italic text-primary">What will you apply today?</p>
                   {!showReflection ? (
-                    <textarea
-                      value={reflection}
-                      onChange={(e) => setReflection(e.target.value)}
-                      onBlur={() => { if (reflection.trim()) setShowReflection(true); }}
-                      placeholder="Write your reflection..."
-                      className="mt-4 w-full resize-none border-none bg-transparent p-0 font-accent text-base italic text-foreground/60 placeholder:text-muted-foreground/30 focus:outline-none"
-                      rows={2}
-                    />
+                    <textarea value={reflection} onChange={(e) => setReflection(e.target.value)} onBlur={() => { if (reflection.trim()) setShowReflection(true); }} placeholder="Write your reflection..." className="mt-4 w-full resize-none border-none bg-transparent p-0 font-accent text-base italic text-foreground/60 placeholder:text-muted-foreground/30 focus:outline-none" rows={2} />
                   ) : (
-                    <motion.p
-                      className="mt-4 font-accent italic text-foreground/40"
-                      initial={{ opacity: 1 }}
-                      animate={{ opacity: 0 }}
-                      transition={{ duration: 3, delay: 1 }}
-                    >
-                      {reflection}
-                    </motion.p>
+                    <motion.p className="mt-4 font-accent italic text-foreground/40" initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 3, delay: 1 }}>{reflection}</motion.p>
                   )}
                 </div>
-
-                <button
-                  onClick={() => { setSelectedArticle(null); setShowReflection(false); setReflection(""); }}
-                  className="mt-8 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  ← Back to Library
-                </button>
+                <button onClick={() => { setSelectedArticle(null); setShowReflection(false); setReflection(""); }} className="mt-8 text-sm text-muted-foreground transition-colors hover:text-foreground">← Back to Library</button>
               </div>
             </motion.div>
           </motion.div>
