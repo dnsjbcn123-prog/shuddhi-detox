@@ -143,21 +143,6 @@ Tools, games, and experiences to understand and transform your relationship with
 
       <WaveDivider flip />
 
-      {/* Notification Storm */}
-      <NotificationStorm />
-
-      <WaveDivider />
-
-      {/* Mindful Scrolling Challenge */}
-      <MindfulScrollChallenge />
-
-      <WaveDivider flip />
-
-      {/* Digital Detox Bingo */}
-      <DetoxBingo />
-
-      <WaveDivider />
-
       {/* Breathing + Timer */}
       <section className="py-20 relative">
         <FloatingOrbs count={3} />
@@ -181,11 +166,30 @@ Tools, games, and experiences to understand and transform your relationship with
         </div>
       </section>
 
-      {/* Reaction Time Test */}
-      <ReactionTimeTest />
+      <WaveDivider />
 
       {/* Release Ritual */}
       <ReleaseRitual />
+
+      <WaveDivider flip />
+
+      {/* Notification Storm */}
+      <NotificationStorm />
+
+      <WaveDivider />
+
+      {/* Mindful Scrolling Challenge */}
+      <MindfulScrollChallenge />
+
+      <WaveDivider flip />
+
+      {/* Digital Detox Bingo */}
+      <DetoxBingo />
+
+      <WaveDivider />
+
+      {/* Reaction Time Test */}
+      <ReactionTimeTest />
 
       <Footer />
     </div>);
