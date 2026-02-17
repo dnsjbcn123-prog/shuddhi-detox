@@ -33,9 +33,9 @@ const Footer = () =>
         <div>
           <h4 className="mb-4 font-heading text-sm font-semibold uppercase tracking-widest text-secondary-foreground/80">Key Features</h4>
           <ul className="space-y-3 text-sm text-secondary-foreground/60">
-            <li> Digital Harmony Score</li>
+            <li>Digital Harmony Score</li>
             <li>Interactive Balance Games</li>
-            <li> AI Voice Transcription</li>
+            <li>AI Voice Transcription</li>
             <li>Guided Meditation Timer</li>
             <li>Screen Time Impact Data</li>
             <li>Reflection Archive</li>
