@@ -10,14 +10,14 @@ import teamSamay from "@/assets/team-samay.jpg";
 import teamDhir from "@/assets/team-dhir.jpg";
 
 const teamMembers = [
-  { name: "Samay Shah", role: "Lead Developer", image: teamSamay },
-  { name: "Dhir Jain", role: "Backend Developer", image: teamDhir },
-  { name: "Rivaan Shah", role: "Content Manager", image: teamRivaan },
-  { name: "Aakash Sharma", role: "Tester", image: teamAakash },
-];
+{ name: "Samay Shah", role: "Lead Developer", image: teamSamay },
+{ name: "Dhir Jain", role: "Backend Developer", image: teamDhir },
+{ name: "Rivaan Shah", role: "Content Manager", image: teamRivaan },
+{ name: "Aakash Sharma", role: "Tester", image: teamAakash }];
 
-const About = () => (
-  <div className="min-h-screen bg-background">
+
+const About = () =>
+<div className="min-h-screen bg-background">
     <Navigation />
 
     {/* Hero */}
@@ -39,11 +39,11 @@ const About = () => (
 
       <div className="container relative mx-auto px-6">
         <motion.div
-          className="mx-auto max-w-3xl"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
+        className="mx-auto max-w-3xl"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}>
+
           <h1 className="font-heading text-4xl font-bold text-foreground md:text-6xl">
             About Shuddhi
           </h1>
@@ -59,11 +59,11 @@ const About = () => (
       <div className="container mx-auto px-6">
         <div className="mx-auto max-w-3xl text-center">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}>
+
             <h2 className="font-accent text-4xl italic text-foreground md:text-5xl">शुद्धि</h2>
             <p className="mt-4 font-heading text-lg tracking-wide text-muted-foreground">
               Shuddhi — Purification, Clarity, Inner Cleansing
@@ -71,12 +71,12 @@ const About = () => (
           </motion.div>
 
           <motion.div
-            className="mt-16 space-y-8 text-left"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 1 }}
-          >
+          className="mt-16 space-y-8 text-left"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 1 }}>
+
             <p className="font-body text-lg leading-relaxed text-foreground/80">
               <span className="font-accent italic text-primary">"Shuddhi"</span> is an English
               transliteration of the Hindi word शुद्धि. Its original meaning is purification,
@@ -102,11 +102,11 @@ const About = () => (
       <div className="container mx-auto px-6">
         <div className="mx-auto max-w-3xl space-y-12">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}>
+
             <p className="font-body text-lg leading-relaxed text-foreground/80">
               We chose this name to connect India's philosophy of balance with the future of
               technology. India has gifted the world practices of mindfulness, yoga, and conscious
@@ -117,27 +117,27 @@ const About = () => (
 
           {/* Image composition */}
           <motion.div
-            className="relative my-16 h-96"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
+          className="relative my-16 h-96"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}>
+
             <div className="absolute left-0 top-0 h-72 w-3/5 overflow-hidden shadow-2xl" style={{ borderRadius: "var(--radius)" }}>
-              <img src={heroImage} alt="Sunlit workspace" className="h-full w-full object-cover" />
+              <img alt="Sunlit workspace" className="h-full w-full object-cover" src="/lovable-uploads/ff885130-4e9b-4300-9037-fa22b22d3a96.png" />
             </div>
             <div className="absolute right-0 bottom-0 h-56 w-2/5 overflow-hidden shadow-xl" style={{ borderRadius: "var(--radius)" }}>
-              <img src={journalImage} alt="Journal on desk" className="h-full w-full object-cover" />
+              <img alt="Journal on desk" className="h-full w-full object-cover" src="/lovable-uploads/b4a7f415-0b50-4c84-9f88-1efcc3a1fb84.png" />
             </div>
           </motion.div>
 
           <motion.div
-            className="glass p-8 md:p-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
+          className="glass p-8 md:p-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.8 }}>
+
             <p className="font-heading text-xl font-bold text-foreground">This is not anti-tech.</p>
             <p className="mt-2 font-heading text-xl font-light text-primary">This is conscious tech.</p>
             <p className="mt-6 font-body text-base leading-relaxed text-muted-foreground">
@@ -148,12 +148,12 @@ const About = () => (
           </motion.div>
 
           <motion.div
-            className="pt-12 text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
+          className="pt-12 text-center"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}>
+
             <p className="font-accent text-3xl italic text-foreground">
               Stay Connected. Stay Centered.
             </p>
@@ -169,12 +169,12 @@ const About = () => (
     <section className="bg-muted py-32">
       <div className="container mx-auto px-6">
         <motion.div
-          className="mb-16 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
+        className="mb-16 text-center"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}>
+
           <h2 className="font-heading text-3xl font-bold text-foreground md:text-4xl">
             The Team Behind Shuddhi
           </h2>
@@ -184,36 +184,36 @@ const About = () => (
         </motion.div>
 
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {teamMembers.map((member, i) => (
-            <motion.div
-              key={member.name}
-              className="glass group flex flex-col items-center overflow-hidden p-0 text-center"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              whileHover={{ y: -5 }}
-            >
+          {teamMembers.map((member, i) =>
+        <motion.div
+          key={member.name}
+          className="glass group flex flex-col items-center overflow-hidden p-0 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.1, duration: 0.6 }}
+          whileHover={{ y: -5 }}>
+
               <div className="relative h-72 w-full overflow-hidden bg-muted">
                 <img
-                  src={member.image}
-                  alt={member.name}
-                  className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                  style={{ objectPosition: "center 25%" }}
-                />
+              src={member.image}
+              alt={member.name}
+              className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              style={{ objectPosition: "center 25%" }} />
+
               </div>
               <div className="w-full bg-background/80 py-5 px-4">
                 <h3 className="font-heading text-base font-bold text-foreground">{member.name}</h3>
                 <p className="mt-1 font-body text-sm text-primary">{member.role}</p>
               </div>
             </motion.div>
-          ))}
+        )}
         </div>
       </div>
     </section>
 
     <Footer />
-  </div>
-);
+  </div>;
+
 
 export default About;
