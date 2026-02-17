@@ -183,31 +183,46 @@ const About = () =>
           </p>
         </motion.div>
 
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {teamMembers.map((member, i) =>
-        <motion.div
-          key={member.name}
-          className="glass group flex flex-col items-center overflow-hidden p-0 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1, duration: 0.6 }}
-          whileHover={{ y: -5 }}>
-
-              <div className="relative h-72 w-full overflow-hidden bg-muted">
-                <img
-              src={member.image}
-              alt={member.name}
-              className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-              style={{ objectPosition: "center 25%" }} />
-
-              </div>
-              <div className="w-full bg-background/80 py-5 px-4">
-                <h3 className="font-heading text-base font-bold text-foreground">{member.name}</h3>
-                <p className="mt-1 font-body text-sm text-primary">{member.role}</p>
-              </div>
-            </motion.div>
-        )}
+        <div className="relative mx-auto max-w-5xl h-[600px] md:h-[550px]">
+          {teamMembers.map((member, i) => {
+            const positions = [
+              "absolute top-0 left-0 z-10 w-[45%] md:w-[30%]",
+              "absolute top-[5%] right-[5%] z-20 w-[42%] md:w-[28%]",
+              "absolute bottom-[5%] left-[15%] z-30 w-[40%] md:w-[26%]",
+              "absolute bottom-0 right-[2%] z-20 w-[44%] md:w-[29%]",
+            ];
+            const animations = [
+              { x: -40, y: 0 },
+              { x: 40, y: -20 },
+              { x: -20, y: 40 },
+              { x: 30, y: 30 },
+            ];
+            return (
+              <motion.div
+                key={member.name}
+                className={`${positions[i]} group overflow-hidden shadow-2xl`}
+                style={{ borderRadius: "var(--radius)" }}
+                initial={{ opacity: 0, x: animations[i].x, y: animations[i].y }}
+                whileInView={{ opacity: 1, x: 0, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2, duration: 0.8 }}
+                whileHover={{ scale: 1.04, zIndex: 40 }}
+              >
+                <div className="relative h-64 md:h-72 w-full overflow-hidden bg-muted">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    style={{ objectPosition: "center 25%" }}
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-secondary/80 to-transparent p-4 pt-10">
+                    <h3 className="font-heading text-sm font-bold text-secondary-foreground">{member.name}</h3>
+                    <p className="font-body text-xs text-primary">{member.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
