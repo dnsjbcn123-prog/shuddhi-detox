@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Mic, MicOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -316,9 +317,55 @@ const ReleaseRitual = () => {
   const [text, setText] = useState("");
   const [released, setReleased] = useState(false);
   const [particles, setParticles] = useState<{id: number;x: number;char: string;}[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  const toggleVoice = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Your browser doesn't support voice typing. Try Chrome or Edge.");
+      return;
+    }
+
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+    recognitionRef.current = recognition;
+
+    let finalTranscript = text;
+
+    recognition.onresult = (event: any) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + " ";
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      setText(finalTranscript + interim);
+    };
+
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+    setIsListening(true);
+  };
 
   const release = () => {
     if (!text.trim()) return;
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
     const chars = text.split("").map((char, i) => ({ id: i, x: 30 + Math.random() * 40, char }));
     setParticles(chars);
     setText("");
@@ -330,9 +377,23 @@ const ReleaseRitual = () => {
     <section className="py-20">
       <div className="container mx-auto flex flex-col items-center px-6">
         <h2 className="font-heading text-2xl font-bold text-foreground">Release Ritual</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Type what you want to let go of.</p>
+        <p className="mt-2 text-sm text-muted-foreground">Type or speak what you want to let go of.</p>
         <div className="relative mt-8 w-full max-w-md">
-          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="What do you want to release?" className="glass w-full resize-none p-6 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} style={{ borderRadius: "var(--radius)" }} />
+          <div className="relative">
+            <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="What do you want to release?" className="glass w-full resize-none p-6 pr-14 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} style={{ borderRadius: "var(--radius)" }} />
+            <button
+              onClick={toggleVoice}
+              className={`absolute right-3 top-3 rounded-full p-2 transition-all duration-300 ${isListening ? "bg-red-500/20 text-red-500 animate-pulse" : "bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary"}`}
+              title={isListening ? "Stop voice typing" : "Start voice typing"}
+            >
+              {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+            </button>
+          </div>
+          {isListening && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-center text-xs text-primary animate-pulse">
+              🎙️ Listening... speak now
+            </motion.p>
+          )}
           <AnimatePresence>
             {particles.map((p) =>
             <motion.span key={p.id} className="pointer-events-none absolute text-lg text-primary" style={{ left: `${p.x}%` }} initial={{ opacity: 1, y: 0 }} animate={{ opacity: 0, y: -200 }} exit={{ opacity: 0 }} transition={{ duration: 2.5, ease: "easeOut", delay: p.id * 0.03 }}>{p.char}</motion.span>
