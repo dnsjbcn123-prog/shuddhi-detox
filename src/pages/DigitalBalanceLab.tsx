@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Zap, ScrollText, Grid3X3, Timer, Wind, Feather, Sparkles, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -224,14 +224,37 @@ const NotificationStorm = () => {
   };
 
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
+      <FloatingOrbs count={3} />
       <div className="container mx-auto px-6">
-        <motion.div className="glass relative mx-auto max-w-3xl overflow-hidden p-8 md:p-12" style={{ minHeight: "400px" }} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          <h2 className="font-heading text-2xl font-bold text-foreground">Experience the Overload</h2>
-          <p className="mt-2 text-sm text-muted-foreground">What does your digital environment feel like?</p>
-          {!simulating && !showMessage &&
-          <button onClick={startStorm} className="mt-8 rounded-lg bg-secondary px-8 py-3 font-heading text-sm tracking-wider text-secondary-foreground uppercase transition-all duration-300 hover:opacity-90" style={{ borderRadius: "var(--radius)" }}>Simulate 10 Seconds</button>
-          }
+        <motion.div className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/20 shadow-2xl" style={{ minHeight: "450px", background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%)" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          {/* Decorative top gradient bar */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-destructive/60 via-warm to-primary/60" />
+          <div className="p-8 md:p-12">
+            <div className="flex items-start gap-4">
+              <motion.div
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-destructive/10"
+                animate={{ rotate: [0, -5, 5, -5, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              >
+                <Bell className="h-7 w-7 text-destructive/70" />
+              </motion.div>
+              <div>
+                <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Experience the Overload</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Feel what 30 notifications in 10 seconds does to your brain. Spoiler: it's chaotic.</p>
+              </div>
+            </div>
+            {!simulating && !showMessage && (
+              <motion.button
+                onClick={startStorm}
+                className="mt-8 flex items-center gap-2 rounded-xl bg-secondary px-8 py-4 font-heading text-sm tracking-wider text-secondary-foreground uppercase shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Zap className="h-4 w-4" />
+                Unleash the Storm
+              </motion.button>
+            )}
           <AnimatePresence>
             {notifications.map((n) =>
             <motion.div key={n.id} className="glass absolute px-4 py-2 text-xs text-foreground shadow-lg" style={{ left: `${n.x}%`, top: `${n.y}%`, borderRadius: "12px", zIndex: 10 }} initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0, y: -30 }} transition={{ duration: 0.3 }}>{n.text}</motion.div>
@@ -239,12 +262,17 @@ const NotificationStorm = () => {
           </AnimatePresence>
           <AnimatePresence>
             {showMessage &&
-            <motion.div className="relative z-20 mt-8 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-                <p className="font-accent text-xl italic text-foreground">"This is your digital environment."</p>
-                <button onClick={() => {setNotifications([]);setShowMessage(false);}} className="mt-6 rounded-lg bg-primary px-8 py-3 font-heading text-sm tracking-wider text-primary-foreground uppercase transition-all duration-300 hover:opacity-90" style={{ borderRadius: "var(--radius)" }}>Restore Balance</button>
+            <motion.div className="relative z-20 mt-8 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                <p className="font-accent text-2xl italic text-foreground">"This is your digital environment."</p>
+                <p className="mt-2 text-sm text-muted-foreground">Now imagine this, all day, every day.</p>
+                <motion.button onClick={() => {setNotifications([]);setShowMessage(false);}} className="mt-6 flex items-center gap-2 mx-auto rounded-xl bg-primary px-8 py-4 font-heading text-sm tracking-wider text-primary-foreground uppercase shadow-lg transition-all duration-300 hover:shadow-xl" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                  <Wind className="h-4 w-4" />
+                  Restore Balance
+                </motion.button>
               </motion.div>
             }
           </AnimatePresence>
+          </div>
         </motion.div>
       </div>
     </section>);
@@ -492,25 +520,39 @@ const MindfulScrollChallenge = () => {
 
 
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
       <div className="container mx-auto px-6">
         <motion.div
-          className="glass mx-auto max-w-2xl overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
+          className="mx-auto max-w-2xl overflow-hidden rounded-2xl border border-white/20 shadow-2xl"
+          style={{ background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--accent) / 0.15) 100%)" }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}>
 
+          <div className="h-1.5 w-full bg-gradient-to-r from-accent/80 via-primary/60 to-accent/80" />
           <div className="p-8">
-            <h2 className="font-heading text-2xl font-bold text-foreground">The Scroll Trap</h2>
-            <p className="mt-2 text-sm text-muted-foreground">Can you resist the urge to keep scrolling?</p>
+            <div className="flex items-start gap-4">
+              <motion.div
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent/20"
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <ScrollText className="h-7 w-7 text-accent-foreground/70" />
+              </motion.div>
+              <div>
+                <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">The Scroll Trap</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Think you can stop scrolling when you want? This experiment might surprise you.</p>
+              </div>
+            </div>
           </div>
 
           {!started && !finished &&
           <div className="px-8 pb-8">
-              <button onClick={() => setStarted(true)} className="rounded-lg bg-secondary px-8 py-3 font-heading text-sm tracking-wider text-secondary-foreground uppercase transition-all duration-300 hover:opacity-90" style={{ borderRadius: "var(--radius)" }}>
-                Start the Challenge
-              </button>
+              <motion.button onClick={() => setStarted(true)} className="flex items-center gap-2 rounded-xl bg-secondary px-8 py-4 font-heading text-sm tracking-wider text-secondary-foreground uppercase shadow-lg transition-all duration-300 hover:shadow-xl" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Sparkles className="h-4 w-4" />
+                Fall Into the Trap
+              </motion.button>
             </div>
           }
 
@@ -535,16 +577,19 @@ const MindfulScrollChallenge = () => {
           }
 
           {finished &&
-          <motion.div className="px-8 pb-8 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-              <p className="font-accent text-xl italic text-foreground">
-                You scrolled {scrollCount} times in {timeElapsed} seconds.
+          <motion.div className="px-8 pb-8 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+              <div className="inline-flex items-center gap-2 rounded-full bg-accent/20 px-4 py-1.5 text-xs font-heading text-accent-foreground mb-4">
+                <Zap className="h-3 w-3" /> Trap Completed
+              </div>
+              <p className="font-accent text-2xl italic text-foreground">
+                You scrolled {scrollCount} times in {timeElapsed}s
               </p>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Imagine doing this for hours, every day. That's the scroll trap.
+              <p className="mt-3 text-sm text-muted-foreground">
+                Imagine this for hours, every day. That's the scroll trap.
               </p>
-              <button onClick={() => {setStarted(false);setFinished(false);setScrollCount(0);setTimeElapsed(0);}} className="mt-6 rounded-lg bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase" style={{ borderRadius: "var(--radius)" }}>
+              <motion.button onClick={() => {setStarted(false);setFinished(false);setScrollCount(0);setTimeElapsed(0);}} className="mt-6 rounded-xl bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase transition-all hover:bg-primary/20" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 Try Again
-              </button>
+              </motion.button>
             </motion.div>
           }
         </motion.div>
@@ -576,19 +621,42 @@ const DetoxBingo = () => {
   const completedCount = checked.filter(Boolean).length;
 
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
+      <FloatingOrbs count={3} />
       <div className="container mx-auto px-6">
         <motion.div
-          className="mx-auto max-w-2xl text-center"
-          initial={{ opacity: 0, y: 20 }}
+          className="mx-auto max-w-2xl"
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}>
 
-          <h2 className="font-heading text-2xl font-bold text-foreground">Digital Detox Bingo</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Complete activities to fill your bingo card. {completedCount}/25 done!
-          </p>
+          <div className="rounded-2xl border border-white/20 p-8 shadow-2xl" style={{ background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--warm) / 0.2) 100%)" }}>
+            <div className="flex items-start gap-4 mb-6">
+              <motion.div
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-warm/30"
+                animate={{ rotate: [0, 5, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Grid3X3 className="h-7 w-7 text-warm-foreground/70" />
+              </motion.div>
+              <div>
+                <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Digital Detox Bingo</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Complete real-world activities to reclaim your time. <span className="font-heading font-bold text-primary">{completedCount}/25</span> done!
+                </p>
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-muted">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-warm"
+                initial={{ width: 0 }}
+                animate={{ width: `${(completedCount / 25) * 100}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
 
           <div className="mt-8 grid grid-cols-5 gap-2">
             {activities.map((activity, i) =>
@@ -620,6 +688,7 @@ const DetoxBingo = () => {
             "🌱 Beautiful start! Every small step matters."}
             </motion.p>
           }
+          </div>
         </motion.div>
       </div>
     </section>);
@@ -667,18 +736,29 @@ const ReactionTimeTest = () => {
   };
 
   return (
-    <section className="py-20">
+    <section className="py-20 relative">
       <div className="container mx-auto px-6">
         <motion.div
-          className="glass mx-auto max-w-xl overflow-hidden text-center"
-          initial={{ opacity: 0, y: 20 }}
+          className="mx-auto max-w-xl overflow-hidden rounded-2xl border border-white/20 shadow-2xl text-center"
+          style={{ background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--primary) / 0.1) 100%)" }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}>
 
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary/60 via-accent/60 to-primary/60" />
           <div className="p-8">
-            <h2 className="font-heading text-2xl font-bold text-foreground">Reaction Time Test</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <motion.div
+                className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <Zap className="h-6 w-6 text-primary" />
+              </motion.div>
+            </div>
+            <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Reaction Time Test</h2>
+            <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
               How fast does your brain react? Does constant stimulation make us faster — or just more reactive?
             </p>
           </div>
