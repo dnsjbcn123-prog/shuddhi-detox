@@ -318,52 +318,72 @@ const ReleaseRitual = () => {
   const [released, setReleased] = useState(false);
   const [particles, setParticles] = useState<{id: number;x: number;char: string;}[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
-  const toggleVoice = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Your browser doesn't support voice typing. Try Chrome or Edge.");
-      return;
-    }
-
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
+  const toggleVoice = async () => {
+    if (isListening) {
+      // Stop recording
+      mediaRecorderRef.current?.stop();
       setIsListening(false);
       return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-    recognitionRef.current = recognition;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
 
-    let finalTranscript = text;
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
 
-    recognition.onresult = (event: any) => {
-      let interim = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + " ";
-        } else {
-          interim += event.results[i][0].transcript;
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const audioBlob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setIsTranscribing(true);
+
+        try {
+          const formData = new FormData();
+          formData.append("audio", audioBlob, "recording.webm");
+
+          const res = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-transcribe`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: formData,
+            }
+          );
+
+          if (!res.ok) throw new Error("Transcription failed");
+          const data = await res.json();
+          if (data.text) {
+            setText((prev) => (prev ? prev + " " + data.text : data.text));
+          }
+        } catch (err) {
+          console.error("Transcription error:", err);
+          alert("Transcription failed. Please try again.");
+        } finally {
+          setIsTranscribing(false);
         }
-      }
-      setText(finalTranscript + interim);
-    };
+      };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-
-    recognition.start();
-    setIsListening(true);
+      mediaRecorder.start();
+      setIsListening(true);
+    } catch {
+      alert("Microphone access is required for voice typing.");
+    }
   };
 
   const release = () => {
     if (!text.trim()) return;
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
+    if (isListening) {
+      mediaRecorderRef.current?.stop();
       setIsListening(false);
     }
     const chars = text.split("").map((char, i) => ({ id: i, x: 30 + Math.random() * 40, char }));
@@ -383,15 +403,21 @@ const ReleaseRitual = () => {
             <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="What do you want to release?" className="glass w-full resize-none p-6 pr-14 font-body text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/30" rows={3} style={{ borderRadius: "var(--radius)" }} />
             <button
               onClick={toggleVoice}
-              className={`absolute right-3 top-3 rounded-full p-2 transition-all duration-300 ${isListening ? "bg-red-500/20 text-red-500 animate-pulse" : "bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary"}`}
-              title={isListening ? "Stop voice typing" : "Start voice typing"}
+              disabled={isTranscribing}
+              className={`absolute right-3 top-3 rounded-full p-2 transition-all duration-300 ${isListening ? "bg-red-500/20 text-red-500 animate-pulse" : isTranscribing ? "bg-muted/30 text-muted-foreground cursor-wait" : "bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary"}`}
+              title={isListening ? "Stop recording" : isTranscribing ? "Transcribing..." : "Start voice typing"}
             >
               {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </button>
           </div>
           {isListening && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-center text-xs text-primary animate-pulse">
-              🎙️ Listening... speak now
+              🎙️ Recording... click mic to stop & transcribe
+            </motion.p>
+          )}
+          {isTranscribing && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-center text-xs text-muted-foreground animate-pulse">
+              ✨ Transcribing your voice...
             </motion.p>
           )}
           <AnimatePresence>
