@@ -201,53 +201,167 @@ Tools, games, and experiences to understand and transform your relationship with
 const NotificationStorm = () => {
   const [simulating, setSimulating] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-  const [notifications, setNotifications] = useState<{id: number;text: string;x: number;y: number;}[]>([]);
+  const [notifications, setNotifications] = useState<{id: number;text: string;x: number;y: number;size: number;color: string;}[]>([]);
+  const [intensity, setIntensity] = useState(0);
+  const [flashActive, setFlashActive] = useState(false);
+  const [popupCount, setPopupCount] = useState(0);
 
   const notifTexts = [
-  "📱 New message from...", "🔔 You have 12 new...", "📧 Email: Don't miss...",
-  "🎯 Your turn to...", "💬 Reply now!", "📢 Breaking news...",
-  "🛒 Sale ending in...", "👍 Someone liked your...", "📸 New photo tagged...",
-  "⚡ Trending now...", "🎮 Your friends are...", "📊 Weekly report...",
-  "🔴 Live now!", "💳 Payment received", "📅 Reminder: Meeting in..."];
+    "📱 New message from...", "🔔 You have 12 new...", "📧 Email: Don't miss...",
+    "🎯 Your turn to...", "💬 Reply now!", "📢 Breaking news...",
+    "🛒 Sale ending in...", "👍 Someone liked your...", "📸 New photo tagged...",
+    "⚡ Trending now...", "🎮 Your friends are...", "📊 Weekly report...",
+    "🔴 Live now!", "💳 Payment received", "📅 Reminder: Meeting in...",
+    "🚨 URGENT: Action needed!", "😤 You're missing out!", "🏷️ Flash deal: 90% off!",
+    "👀 Someone viewed your...", "🗳️ Poll: Vote now!", "📍 Check-in nearby!",
+    "🎵 New song by...", "💬 3 unread chats", "⏰ Don't forget to...",
+    "🔥 Going viral!", "😱 You won't believe...", "📣 Ad: Buy now!",
+    "👋 Wave back to...", "🆕 App update available", "📬 47 unread emails",
+  ];
 
+  const notifColors = [
+    "hsl(var(--destructive) / 0.15)", "hsl(var(--primary) / 0.15)", "hsl(var(--accent) / 0.2)",
+    "hsl(var(--warm) / 0.2)", "hsl(var(--secondary) / 0.2)",
+  ];
 
   const startStorm = () => {
     setSimulating(true);
     setShowMessage(false);
     setNotifications([]);
+    setIntensity(0);
+    setPopupCount(0);
     let count = 0;
+
     const interval = setInterval(() => {
-      if (count >= 30) {
+      if (count >= 45) {
         clearInterval(interval);
-        setTimeout(() => {setSimulating(false);setShowMessage(true);}, 500);
+        setTimeout(() => { setSimulating(false); setShowMessage(true); setIntensity(0); }, 600);
         return;
       }
-      setNotifications((prev) => [...prev, { id: Date.now() + Math.random(), text: notifTexts[Math.floor(Math.random() * notifTexts.length)], x: Math.random() * 80 + 5, y: Math.random() * 70 + 10 }]);
+      const currentIntensity = Math.min(count / 15, 1);
+      setIntensity(currentIntensity);
+      setPopupCount(count);
+
+      if (count > 15 && Math.random() > 0.6) {
+        setFlashActive(true);
+        setTimeout(() => setFlashActive(false), 100);
+      }
+
+      const spawnCount = count > 30 ? 3 : count > 15 ? 2 : 1;
+      for (let s = 0; s < spawnCount; s++) {
+        setNotifications((prev) => [
+          ...prev.slice(-40),
+          {
+            id: Date.now() + Math.random(),
+            text: notifTexts[Math.floor(Math.random() * notifTexts.length)],
+            x: Math.random() * 85 + 5,
+            y: Math.random() * 75 + 10,
+            size: 0.7 + Math.random() * 0.6,
+            color: notifColors[Math.floor(Math.random() * notifColors.length)],
+          },
+        ]);
+      }
       count++;
-    }, 300);
+    }, count > 30 ? 150 : 250);
+  };
+
+  const shakeVariant = {
+    shake: {
+      x: [0, -3, 5, -7, 4, -2, 6, -4, 0],
+      y: [0, 2, -4, 3, -5, 2, -3, 4, 0],
+      transition: { duration: 0.4, repeat: Infinity, repeatType: "loop" as const },
+    },
+    idle: { x: 0, y: 0 },
   };
 
   return (
     <section className="py-20 relative">
       <FloatingOrbs count={3} />
       <div className="container mx-auto px-6">
-        <motion.div className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/20 shadow-2xl" style={{ minHeight: "450px", background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%)" }} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          {/* Decorative top gradient bar */}
-          <div className="h-1.5 w-full bg-gradient-to-r from-destructive/60 via-warm to-primary/60" />
-          <div className="p-8 md:p-12">
+        <motion.div
+          className="relative mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/20 shadow-2xl"
+          style={{ minHeight: "500px", background: "linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%)" }}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          variants={shakeVariant}
+          animate={simulating && intensity > 0.3 ? "shake" : "idle"}
+        >
+          <AnimatePresence>
+            {flashActive && (
+              <motion.div
+                className="absolute inset-0 z-30 bg-white/20 pointer-events-none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.05 }}
+              />
+            )}
+          </AnimatePresence>
+
+          {simulating && (
+            <motion.div
+              className="absolute inset-0 rounded-2xl border-2 border-destructive/40 pointer-events-none z-20"
+              animate={{ opacity: [0.2, 0.6, 0.2] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+            />
+          )}
+
+          <motion.div
+            className="h-1.5 w-full"
+            animate={simulating
+              ? { background: ["linear-gradient(90deg, hsl(var(--destructive)) 0%, hsl(var(--warm)) 50%, hsl(var(--destructive)) 100%)", "linear-gradient(90deg, hsl(var(--warm)) 0%, hsl(var(--destructive)) 50%, hsl(var(--warm)) 100%)"] }
+              : {}
+            }
+            transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
+            style={{ background: "linear-gradient(90deg, hsl(var(--destructive) / 0.6), hsl(var(--warm)), hsl(var(--primary) / 0.6))" }}
+          />
+
+          <div className="p-8 md:p-12 relative">
             <div className="flex items-start gap-4">
               <motion.div
                 className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-destructive/10"
-                animate={{ rotate: [0, -5, 5, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                animate={simulating
+                  ? { rotate: [0, -15, 15, -10, 10, -5, 5, 0], scale: [1, 1.2, 0.9, 1.15, 0.95, 1.1, 1] }
+                  : { rotate: [0, -5, 5, -5, 0] }
+                }
+                transition={simulating
+                  ? { duration: 0.5, repeat: Infinity }
+                  : { duration: 2, repeat: Infinity, repeatDelay: 3 }
+                }
               >
                 <Bell className="h-7 w-7 text-destructive/70" />
               </motion.div>
               <div>
                 <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">Experience the Overload</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Feel what 30 notifications in 10 seconds does to your brain. Spoiler: it's chaotic.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Feel what 45+ notifications in seconds does to your brain. Brace yourself.</p>
               </div>
             </div>
+
+            {simulating && (
+              <motion.div className="mt-4 flex items-center gap-3" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <div className="flex items-center gap-2 rounded-full bg-destructive/10 px-4 py-1.5">
+                  <motion.span
+                    className="font-heading text-lg font-bold text-destructive"
+                    animate={{ scale: [1, 1.3, 1] }}
+                    transition={{ duration: 0.3, repeat: Infinity }}
+                  >
+                    {popupCount}
+                  </motion.span>
+                  <span className="text-xs text-destructive/70 uppercase tracking-wider">notifications</span>
+                </div>
+                <motion.div className="h-2 flex-1 rounded-full bg-muted overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-warm via-destructive to-destructive"
+                    animate={{ width: `${intensity * 100}%` }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+                <span className="text-xs text-muted-foreground font-heading uppercase">Chaos</span>
+              </motion.div>
+            )}
+
             {!simulating && !showMessage && (
               <motion.button
                 onClick={startStorm}
@@ -259,28 +373,48 @@ const NotificationStorm = () => {
                 Unleash the Storm
               </motion.button>
             )}
-          <AnimatePresence>
-            {notifications.map((n) =>
-            <motion.div key={n.id} className="glass absolute px-4 py-2 text-xs text-foreground shadow-lg" style={{ left: `${n.x}%`, top: `${n.y}%`, borderRadius: "12px", zIndex: 10 }} initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0, y: -30 }} transition={{ duration: 0.3 }}>{n.text}</motion.div>
-            )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {showMessage &&
-            <motion.div className="relative z-20 mt-8 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-                <p className="font-accent text-2xl italic text-foreground">"This is your digital environment."</p>
-                <p className="mt-2 text-sm text-muted-foreground">Now imagine this, all day, every day.</p>
-                <motion.button onClick={() => {setNotifications([]);setShowMessage(false);}} className="mt-6 flex items-center gap-2 mx-auto rounded-xl bg-primary px-8 py-4 font-heading text-sm tracking-wider text-primary-foreground uppercase shadow-lg transition-all duration-300 hover:shadow-xl" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                  <Wind className="h-4 w-4" />
-                  Restore Balance
-                </motion.button>
-              </motion.div>
-            }
-          </AnimatePresence>
+
+            <AnimatePresence>
+              {notifications.map((n) => (
+                <motion.div
+                  key={n.id}
+                  className="absolute px-3 py-2 text-xs text-foreground shadow-lg border border-border/50 backdrop-blur-sm font-body"
+                  style={{
+                    left: `${n.x}%`, top: `${n.y}%`, borderRadius: "12px", zIndex: 10,
+                    background: n.color, fontSize: `${n.size * 0.75}rem`,
+                  }}
+                  initial={{ opacity: 0, scale: 0.3, rotate: Math.random() * 20 - 10 }}
+                  animate={{ opacity: 1, scale: n.size, rotate: Math.random() * 10 - 5 }}
+                  exit={{ opacity: 0, scale: 0, y: -20, rotate: Math.random() * 30 - 15 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {n.text}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {showMessage && (
+                <motion.div className="relative z-20 mt-8 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+                  <p className="font-accent text-2xl italic text-foreground">"This is your digital environment."</p>
+                  <p className="mt-2 text-sm text-muted-foreground">Now imagine this, all day, every day.</p>
+                  <motion.button
+                    onClick={() => { setNotifications([]); setShowMessage(false); }}
+                    className="mt-6 flex items-center gap-2 mx-auto rounded-xl bg-primary px-8 py-4 font-heading text-sm tracking-wider text-primary-foreground uppercase shadow-lg transition-all duration-300 hover:shadow-xl"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <Wind className="h-4 w-4" />
+                    Restore Balance
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>
-    </section>);
-
+    </section>
+  );
 };
 
 const BreathingExercise = () => {
