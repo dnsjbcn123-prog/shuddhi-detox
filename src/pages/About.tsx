@@ -44,10 +44,10 @@ const About = () =>
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}>
 
-          <h1 className="font-heading text-4xl font-bold text-foreground md:text-6xl">
+          <h1 className="text-4xl font-bold text-foreground text-center font-sans md:text-8xl">
             About Shuddhi
           </h1>
-          <p className="mt-6 font-accent text-xl italic text-primary md:text-2xl">
+          <p className="mt-6 font-accent text-xl italic text-primary md:text-2xl text-center px-0">
             शुद्धि — Purification. Clarity. Balance.
           </p>
         </motion.div>
