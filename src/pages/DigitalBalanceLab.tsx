@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import calmNature from "@/assets/calm-nature.jpg";
+import { WaveDivider, FloatingOrbs, FloatingLeaves, DotPattern } from "@/components/LabBackgroundElements";
 
 const scoreCategories = [
 { max: 20, label: "Centered", color: "hsl(141, 40%, 45%)", message: "You navigate the digital world with remarkable intentionality. Your relationship with technology reflects deep awareness." },
@@ -33,7 +34,9 @@ const DigitalBalanceLab = () => {
   const category = score !== null ? getCategory(score) : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Global ambient elements */}
+      <FloatingLeaves count={6} />
       <Navigation />
 
       {/* Hero with image */}
@@ -61,9 +64,12 @@ Tools, games, and experiences to understand and transform your relationship with
           </motion.p>
         </div>
       </section>
+      <WaveDivider />
 
       {/* Digital Footprint Calculator */}
-      <section className="py-20">
+      <section className="py-20 relative">
+        <FloatingOrbs count={4} />
+        <DotPattern />
         <div className="container mx-auto px-6">
           <div className="mx-auto max-w-2xl">
             <motion.div
@@ -135,17 +141,26 @@ Tools, games, and experiences to understand and transform your relationship with
         </div>
       </section>
 
+      <WaveDivider flip />
+
       {/* Notification Storm */}
       <NotificationStorm />
+
+      <WaveDivider />
 
       {/* Mindful Scrolling Challenge */}
       <MindfulScrollChallenge />
 
+      <WaveDivider flip />
+
       {/* Digital Detox Bingo */}
       <DetoxBingo />
 
+      <WaveDivider />
+
       {/* Breathing + Timer */}
-      <section className="py-20">
+      <section className="py-20 relative">
+        <FloatingOrbs count={3} />
         <div className="container mx-auto px-6">
           <motion.h2
             className="mb-12 text-center font-heading text-3xl font-bold text-foreground md:text-4xl"
