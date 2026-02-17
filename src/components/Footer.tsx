@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Leaf, Brain, Gamepad2, BookOpen, HelpCircle, Users } from "lucide-react";
 
-const Footer = () => (
-  <footer className="border-t border-border bg-secondary py-16 text-secondary-foreground">
+const Footer = () =>
+<footer className="border-t border-border bg-secondary py-16 text-secondary-foreground">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
         {/* About Shuddhi */}
@@ -33,12 +33,12 @@ const Footer = () => (
         <div>
           <h4 className="mb-4 font-heading text-sm font-semibold uppercase tracking-widest text-secondary-foreground/80">Key Features</h4>
           <ul className="space-y-3 text-sm text-secondary-foreground/60">
-            <li>🧮 Digital Harmony Score</li>
-            <li>🎮 Interactive Balance Games</li>
-            <li>🎙️ AI Voice Transcription</li>
-            <li>🧘 Guided Meditation Timer</li>
-            <li>📊 Screen Time Impact Data</li>
-            <li>✍️ Reflection Archive</li>
+            <li> Digital Harmony Score</li>
+            <li>Interactive Balance Games</li>
+            <li> AI Voice Transcription</li>
+            <li>Guided Meditation Timer</li>
+            <li>Screen Time Impact Data</li>
+            <li>Reflection Archive</li>
           </ul>
         </div>
 
@@ -64,7 +64,7 @@ const Footer = () => (
         </p>
       </div>
     </div>
-  </footer>
-);
+  </footer>;
+
 
 export default Footer;
