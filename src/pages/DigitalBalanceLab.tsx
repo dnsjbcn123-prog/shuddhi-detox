@@ -288,17 +288,30 @@ const BreathingExercise = () => {
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    audioRef.current = new Audio("/audio/meditation-ambient.mp3");
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.4;
-    return () => {audioRef.current?.pause();audioRef.current = null;};
-  }, []);
-
   const toggleBreathing = () => {
-    if (!active) {audioRef.current?.play().catch(() => {});} else {if (audioRef.current) {audioRef.current.pause();audioRef.current.currentTime = 0;}}
+    if (!active) {
+      // Create audio fresh on user click to satisfy autoplay policy
+      if (!audioRef.current) {
+        const audio = new Audio("/audio/meditation-ambient.mp3");
+        audio.loop = true;
+        audio.volume = 0.4;
+        audio.preload = "auto";
+        audioRef.current = audio;
+      }
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((err) => console.warn("Audio play failed:", err));
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
     setActive(!active);
   };
+
+  useEffect(() => {
+    return () => { audioRef.current?.pause(); audioRef.current = null; };
+  }, []);
 
   useEffect(() => {
     if (!active) return;
