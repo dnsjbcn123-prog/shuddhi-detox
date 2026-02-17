@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import { Send, MessageCircle, RefreshCw } from "lucide-react";
+import { Send, MessageCircle, RefreshCw, Globe, Lightbulb, Rocket, HelpCircle, ChevronDown, Sparkles, Bot } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const faqs = [
@@ -36,8 +36,32 @@ type ChatMsg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/shuddhi-chat`;
 
+const futureVisionItems = [
+  {
+    icon: Globe,
+    title: "Evolution of Technology",
+    content: "We envision a world where technology adapts to human rhythms — not the other way around. Shuddhi tracks emerging trends in AI, social media, and device design to help you stay ahead of the curve while maintaining your digital well-being.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Smart Planning & Innovation",
+    content: "From AI-powered screen-time insights to personalized digital wellness plans, we're building tools that make intentional living effortless. Our roadmap includes smart notifications, focus-mode automation, and community-driven challenges.",
+  },
+  {
+    icon: Rocket,
+    title: "Next-Generation Solutions",
+    content: "We're developing features like real-time digital habit tracking, gamified detox journeys, and cross-device wellness syncing — all designed to empower the next generation to build a healthier relationship with technology.",
+  },
+  {
+    icon: HelpCircle,
+    title: "Why Shuddhi?",
+    content: "Shuddhi isn't just another wellness app — it's a movement rooted in ancient Indian wisdom and modern behavioural science. We combine mindfulness traditions with cutting-edge technology to offer a uniquely holistic approach to digital balance.",
+  },
+];
+
 const FAQ = () => {
   const [selected, setSelected] = useState<number | null>(null);
+  const [visionOpen, setVisionOpen] = useState<number | null>(null);
 
   // Chat state
   const [chatOpen, setChatOpen] = useState(false);
@@ -182,6 +206,90 @@ const FAQ = () => {
             <p className="mt-4 text-lg text-muted-foreground">
               Understanding digital balance, one question at a time.
             </p>
+          </motion.div>
+
+          {/* AI Promotion Banner */}
+          <motion.div
+            className="mx-auto mb-16 max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 p-8 text-center">
+              <div className="absolute -top-6 -right-6 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+              <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
+              <div className="relative">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/15">
+                  <Bot className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="font-heading text-xl font-semibold text-foreground">
+                  Meet Shuddhi AI — Your Digital Wellness Guide
+                </h3>
+                <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
+                  Have a question about digital balance, mindful tech, or building healthier habits? Our AI assistant is trained on everything Shuddhi — scroll down to start a conversation.
+                </p>
+                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-primary/70">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span className="font-heading tracking-wider uppercase">Powered by Shuddhi Intelligence</span>
+                  <Sparkles className="h-3.5 w-3.5" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Future Vision Panel */}
+          <motion.div
+            className="mx-auto mb-20 max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="glass overflow-hidden">
+              <div className="p-8 text-center border-b border-border/50">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <Globe className="h-6 w-6 text-primary" />
+                </div>
+                <h2 className="font-heading text-2xl font-bold text-foreground">Future Vision</h2>
+                <p className="mt-2 text-sm text-muted-foreground italic max-w-lg mx-auto">
+                  Highlighting Shuddhi's forward-thinking mindset — understanding how technology and digital systems will evolve and preparing solutions for the next generation.
+                </p>
+              </div>
+              <div className="divide-y divide-border/50">
+                {futureVisionItems.map((item, i) => (
+                  <div key={i}>
+                    <button
+                      className="flex w-full items-center justify-between p-5 text-left transition-colors hover:bg-muted/30"
+                      onClick={() => setVisionOpen(visionOpen === i ? null : i)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <item.icon className="h-5 w-5 text-primary shrink-0" />
+                        <span className="font-heading text-sm font-medium text-foreground">{item.title}</span>
+                      </div>
+                      <motion.div
+                        animate={{ rotate: visionOpen === i ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      </motion.div>
+                    </button>
+                    <AnimatePresence>
+                      {visionOpen === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.35, ease: "easeInOut" }}
+                        >
+                          <p className="px-5 pb-5 pl-13 font-body text-sm leading-relaxed text-muted-foreground">
+                            {item.content}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
           {/* FAQ cards */}
