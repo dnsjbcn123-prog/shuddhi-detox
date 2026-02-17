@@ -194,16 +194,16 @@ const About = () => (
               transition={{ delay: i * 0.1, duration: 0.6 }}
               whileHover={{ y: -5 }}
             >
-              <div className="relative h-64 w-full overflow-hidden">
+              <div className="relative h-72 w-full overflow-hidden bg-muted">
                 <img
                   src={member.image}
                   alt={member.name}
-                  className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                  className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  style={{ objectPosition: "center 25%" }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 to-transparent" />
               </div>
-              <div className="relative -mt-12 z-10 pb-6 px-4">
-                <h3 className="font-heading text-lg font-bold text-foreground">{member.name}</h3>
+              <div className="w-full bg-background/80 py-5 px-4">
+                <h3 className="font-heading text-base font-bold text-foreground">{member.name}</h3>
                 <p className="mt-1 font-body text-sm text-primary">{member.role}</p>
               </div>
             </motion.div>
