@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/shuddhi-detox/",
+  base: mode === "production" ? "/shuddhi-detox/" : "/",
   server: {
     host: "::",
     port: 8080,
