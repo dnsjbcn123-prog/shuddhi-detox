@@ -56,7 +56,7 @@ const DigitalBalanceLab = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Tools to understand, measure, and transform your relationship with technology.
+            Tools, games, and experiences to understand and transform your relationship with technology.
           </motion.p>
         </div>
       </section>
@@ -75,9 +75,7 @@ const DigitalBalanceLab = () => {
               <h2 className="font-heading text-2xl font-bold text-foreground">
                 Measure Your Digital Frequency
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                No judgment. Just awareness.
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">No judgment. Just awareness.</p>
 
               <div className="mt-10 space-y-8">
                 <div>
@@ -139,6 +137,12 @@ const DigitalBalanceLab = () => {
       {/* Notification Storm */}
       <NotificationStorm />
 
+      {/* Mindful Scrolling Challenge */}
+      <MindfulScrollChallenge />
+
+      {/* Digital Detox Bingo */}
+      <DetoxBingo />
+
       {/* Breathing + Timer */}
       <section className="py-20">
         <div className="container mx-auto px-6">
@@ -160,6 +164,9 @@ const DigitalBalanceLab = () => {
           </div>
         </div>
       </section>
+
+      {/* Reaction Time Test */}
+      <ReactionTimeTest />
 
       {/* Release Ritual */}
       <ReleaseRitual />
@@ -337,6 +344,283 @@ const ReleaseRitual = () => {
         ) : (
           <motion.p className="mt-8 font-accent text-xl italic text-primary" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>Space Created.</motion.p>
         )}
+      </div>
+    </section>
+  );
+};
+
+/* ─── NEW: Mindful Scrolling Challenge ─── */
+const MindfulScrollChallenge = () => {
+  const [started, setStarted] = useState(false);
+  const [scrollCount, setScrollCount] = useState(0);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!started || finished) return;
+    const timer = setInterval(() => setTimeElapsed(p => p + 1), 1000);
+    return () => clearInterval(timer);
+  }, [started, finished]);
+
+  useEffect(() => {
+    if (!started || finished) return;
+    const handler = () => setScrollCount(p => p + 1);
+    const el = containerRef.current;
+    el?.addEventListener("scroll", handler);
+    return () => el?.removeEventListener("scroll", handler);
+  }, [started, finished]);
+
+  const messages = [
+    "Notice how your thumb moves automatically.",
+    "Are you reading this, or just scrolling past?",
+    "What are you looking for?",
+    "How does this feel in your body?",
+    "Take one deep breath before continuing.",
+    "You've been scrolling. That's okay. Just notice it.",
+    "What if you stopped right here?",
+    "This content will never end. But your attention will.",
+    "You could close this and look out a window.",
+    "Still here? You're proving the point.",
+    "The scroll is a reflex. Can you pause it?",
+    "Three more... then a truth.",
+    "Two more...",
+    "One more...",
+    "You just scrolled through nothing meaningful — and your brain barely noticed.",
+  ];
+
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-6">
+        <motion.div
+          className="glass mx-auto max-w-2xl overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="p-8">
+            <h2 className="font-heading text-2xl font-bold text-foreground">The Scroll Trap</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Can you resist the urge to keep scrolling?</p>
+          </div>
+
+          {!started && !finished && (
+            <div className="px-8 pb-8">
+              <button onClick={() => setStarted(true)} className="rounded-lg bg-secondary px-8 py-3 font-heading text-sm tracking-wider text-secondary-foreground uppercase transition-all duration-300 hover:opacity-90" style={{ borderRadius: "var(--radius)" }}>
+                Start the Challenge
+              </button>
+            </div>
+          )}
+
+          {started && !finished && (
+            <div ref={containerRef} className="h-72 overflow-y-auto px-8 pb-8" style={{ scrollBehavior: "smooth" }}>
+              <div className="space-y-32 pb-20">
+                {messages.map((msg, i) => (
+                  <motion.p
+                    key={i}
+                    className="font-body text-base text-foreground/70"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, amount: 0.8 }}
+                    transition={{ duration: 0.8 }}
+                    onViewportEnter={() => { if (i === messages.length - 1) setFinished(true); }}
+                  >
+                    {msg}
+                  </motion.p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {finished && (
+            <motion.div className="px-8 pb-8 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+              <p className="font-accent text-xl italic text-foreground">
+                You scrolled {scrollCount} times in {timeElapsed} seconds.
+              </p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Imagine doing this for hours, every day. That's the scroll trap.
+              </p>
+              <button onClick={() => { setStarted(false); setFinished(false); setScrollCount(0); setTimeElapsed(0); }} className="mt-6 rounded-lg bg-primary/10 px-8 py-3 font-heading text-sm tracking-wider text-foreground uppercase" style={{ borderRadius: "var(--radius)" }}>
+                Try Again
+              </button>
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+/* ─── NEW: Digital Detox Bingo ─── */
+const DetoxBingo = () => {
+  const activities = [
+    "Read for 30 min", "No phone at meals", "Walk without earbuds",
+    "1 hour no notifications", "Call a friend instead of texting", "No screens before bed",
+    "Meditate 10 min", "Journal your thoughts", "Cook without a recipe video",
+    "Watch a sunset", "Have a face-to-face conversation", "Go screen-free for 2 hours",
+    "Draw or doodle something", "Listen to nature sounds", "Organize a physical space",
+    "Do 20 min of exercise", "Write a letter by hand", "Take photos with intention",
+    "Practice deep breathing", "Eat mindfully without distractions", "Spend time with a pet or plant",
+    "Play a board game", "Do a digital cleanup", "Read a physical newspaper",
+    "Stretch for 15 minutes",
+  ];
+
+  const [checked, setChecked] = useState<boolean[]>(new Array(25).fill(false));
+
+  const toggle = (i: number) => {
+    setChecked(prev => { const n = [...prev]; n[i] = !n[i]; return n; });
+  };
+
+  const completedCount = checked.filter(Boolean).length;
+
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-6">
+        <motion.div
+          className="mx-auto max-w-2xl text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="font-heading text-2xl font-bold text-foreground">Digital Detox Bingo</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Complete activities to fill your bingo card. {completedCount}/25 done!
+          </p>
+
+          <div className="mt-8 grid grid-cols-5 gap-2">
+            {activities.map((activity, i) => (
+              <motion.button
+                key={i}
+                onClick={() => toggle(i)}
+                className={`aspect-square flex items-center justify-center rounded-lg p-1 text-center font-body text-[10px] leading-tight transition-all duration-300 md:text-xs ${
+                  checked[i]
+                    ? "bg-primary text-primary-foreground shadow-lg"
+                    : "bg-muted text-muted-foreground hover:bg-primary/10"
+                }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {checked[i] ? "✓" : activity}
+              </motion.button>
+            ))}
+          </div>
+
+          {completedCount >= 5 && (
+            <motion.p
+              className="mt-6 font-accent text-lg italic text-primary"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              {completedCount >= 25 ? "🏆 Full board! You're a digital balance master!" :
+               completedCount >= 15 ? "🌟 Amazing progress! Keep going!" :
+               completedCount >= 10 ? "💪 Great momentum! You're building real habits." :
+               "🌱 Beautiful start! Every small step matters."}
+            </motion.p>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+/* ─── NEW: Reaction Time Test ─── */
+const ReactionTimeTest = () => {
+  const [state, setState] = useState<"idle" | "waiting" | "ready" | "done">("idle");
+  const [startTime, setStartTime] = useState(0);
+  const [reactionTime, setReactionTime] = useState(0);
+  const [attempts, setAttempts] = useState<number[]>([]);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const start = () => {
+    setState("waiting");
+    const delay = 2000 + Math.random() * 4000;
+    timeoutRef.current = setTimeout(() => {
+      setState("ready");
+      setStartTime(Date.now());
+    }, delay);
+  };
+
+  const handleClick = () => {
+    if (state === "waiting") {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      setState("idle");
+      return;
+    }
+    if (state === "ready") {
+      const time = Date.now() - startTime;
+      setReactionTime(time);
+      setAttempts(prev => [...prev, time]);
+      setState("done");
+    }
+  };
+
+  const avg = attempts.length > 0 ? Math.round(attempts.reduce((a, b) => a + b, 0) / attempts.length) : 0;
+
+  const getMessage = (ms: number) => {
+    if (ms < 250) return "Lightning fast! But is speed always the answer? 🤔";
+    if (ms < 350) return "Quick reflexes! Your brain is wired for instant response.";
+    if (ms < 500) return "Normal range. Your brain takes time — and that's okay.";
+    return "Slow and mindful. Sometimes the best response is a delayed one. 🧘";
+  };
+
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-6">
+        <motion.div
+          className="glass mx-auto max-w-xl overflow-hidden text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="p-8">
+            <h2 className="font-heading text-2xl font-bold text-foreground">Reaction Time Test</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              How fast does your brain react? Does constant stimulation make us faster — or just more reactive?
+            </p>
+          </div>
+
+          <div
+            onClick={state === "waiting" || state === "ready" ? handleClick : undefined}
+            className={`flex h-48 cursor-pointer items-center justify-center transition-colors duration-300 ${
+              state === "waiting" ? "bg-destructive/20" :
+              state === "ready" ? "bg-primary/30" :
+              "bg-muted/50"
+            }`}
+          >
+            {state === "idle" && (
+              <button onClick={start} className="rounded-lg bg-primary px-8 py-3 font-heading text-sm tracking-wider text-primary-foreground uppercase" style={{ borderRadius: "var(--radius)" }}>
+                Start Test
+              </button>
+            )}
+            {state === "waiting" && (
+              <p className="font-heading text-xl text-foreground/60">Wait for green...</p>
+            )}
+            {state === "ready" && (
+              <motion.p
+                className="font-heading text-2xl font-bold text-primary"
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.15 }}
+              >
+                CLICK NOW!
+              </motion.p>
+            )}
+            {state === "done" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <p className="font-heading text-4xl font-bold text-primary">{reactionTime}ms</p>
+                <p className="mt-2 text-sm text-muted-foreground">{getMessage(reactionTime)}</p>
+                {attempts.length > 1 && (
+                  <p className="mt-1 text-xs text-muted-foreground/60">Average: {avg}ms over {attempts.length} attempts</p>
+                )}
+                <button onClick={() => { setState("idle"); }} className="mt-4 rounded-lg bg-primary/10 px-6 py-2 font-heading text-xs tracking-wider text-foreground uppercase" style={{ borderRadius: "var(--radius)" }}>
+                  Try Again
+                </button>
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
       </div>
     </section>
   );
