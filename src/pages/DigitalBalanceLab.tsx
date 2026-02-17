@@ -51,12 +51,12 @@ const DigitalBalanceLab = () => {
             Digital Balance Lab
           </motion.h1>
           <motion.p
-            className="mt-4 max-w-lg text-lg text-muted-foreground text-center my-[14px] px-0"
+            className="mt-4 max-w-lg text-lg text-muted-foreground text-center my-[14px] px-0 mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}>
 
-            Tools, games, and experiences to understand and transform your relationship with technology.
+Tools, games, and experiences to understand and transform your relationship with technology.
           </motion.p>
         </div>
       </section>
